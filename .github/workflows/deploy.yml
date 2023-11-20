@@ -30,4 +30,3 @@ jobs:
           heroku_email: eui4453@likelion.org
           # The appname to use for deploying/updating
           heroku_app_name: my-sns
-[]

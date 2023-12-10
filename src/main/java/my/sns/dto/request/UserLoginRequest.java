@@ -1,14 +1,13 @@
-package my.sns.controller.request;
+package my.sns.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// Dto
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class UserJoinRequest {
+@AllArgsConstructor
+public class UserLoginRequest {
 
     private String userName;
     private String password;

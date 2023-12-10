@@ -1,4 +1,4 @@
-package my.sns.controller.repository;
+package my.sns.repository;
 
 import my.sns.model.User;
 import my.sns.model.entity.UserEntity;

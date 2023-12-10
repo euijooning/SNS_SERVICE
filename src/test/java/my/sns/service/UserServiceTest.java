@@ -1,6 +1,6 @@
 package my.sns.service;
 
-import my.sns.controller.repository.UserEntityRepository;
+import my.sns.repository.UserEntityRepository;
 import my.sns.exception.SnsApplicationException;
 import my.sns.fixture.UserEntityFixture;
 import my.sns.model.entity.UserEntity;
@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

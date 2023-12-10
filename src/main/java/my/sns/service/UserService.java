@@ -1,13 +1,12 @@
 package my.sns.service;
 
 import lombok.RequiredArgsConstructor;
+import my.sns.exception.CustomErrorCode;
 import my.sns.repository.UserEntityRepository;
 import my.sns.exception.SnsApplicationException;
-import my.sns.model.User;
+import my.sns.dto.UserDto;
 import my.sns.model.entity.UserEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,25 +15,26 @@ public class UserService {
     private final UserEntityRepository userEntityRepository;
 
 
-    public User join(String userName, String password) {
+    public UserDto join(String userName, String password) {
         // 회원가입 된 user 유저 체크
-        Optional<UserEntity> userEntity = userEntityRepository.findByUserName(userName);
+        userEntityRepository.findByUserName(userName)
+                .ifPresent(it -> {
+                    throw new SnsApplicationException(CustomErrorCode.DUPLICATED_USER_NAME, String.format("%s is duplicated", userName));
+                });
 
         // 회원가입
-        userEntityRepository.save(new UserEntity());
+        UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, password));
 
-
-        return new User();
+        return UserDto.fromEntity(userEntity);
     }
 
     public String login(String userName, String password) {
         // 회원가입 여부 체크
-//        userEntityRepository.findByUserName(userName).orElseThrow(() -> new SnsApplicationException());
-        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(SnsApplicationException::new);
+        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow();
 
         // 비밀번호 체크
         if (!userEntity.getPassword().equals(password)) {
-            throw new SnsApplicationException();
+            throw new SnsApplicationException(CustomErrorCode.INVALID_PASSWORD, "");
         }
 
         // 토큰 생성

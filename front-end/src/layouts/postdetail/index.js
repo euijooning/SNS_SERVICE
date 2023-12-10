@@ -1,21 +1,20 @@
 /**
-=========================================================
-* Material Dashboard 2 React - v2.1.0
-=========================================================
+ =========================================================
+ * Material Dashboard 2 React - v2.1.0
+ =========================================================
 
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+ * Product Page: https://www.creative-tim.com/product/material-dashboard-react
+ * Copyright 2022 Creative Tim (https://www.creative-tim.com)
 
-Coded by www.creative-tim.com
+ Coded by www.creative-tim.com
 
  =========================================================
 
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ */
 
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 // @mui material components
 import Grid from '@mui/material/Grid';
@@ -32,9 +31,6 @@ import MDPagination from 'components/MDPagination';
 
 // Material Dashboard 2 React example components
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
-import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
-import Footer from 'examples/Footer';
-import DataTable from 'examples/Tables/DataTable';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -45,16 +41,10 @@ import Slide from '@mui/material/Slide';
 
 import axios from 'axios';
 
-// const Transition = React.forwardRef(function Transition(
-//   props: TransitionProps & {
-//     children: React.ReactElement<any, any>,
-//   },
-//   ref: React.Ref<unknown>,
-// ) {
-//   return <Slide direction="up" ref={ref} {...props} />;
-// });
-
-const Transition = React.forwardRef(function Transition(props, ref) {
+const Transition = React.forwardRef(function Transition(
+    props,
+    ref
+) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
@@ -81,13 +71,13 @@ function PostDetail() {
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
     })
-      .then((res) => {
-        console.log('success');
-        handleLikeCounts();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        .then((res) => {
+          console.log('success');
+          handleLikeCounts();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
   };
 
   const handleLikeCounts = (event) => {
@@ -99,13 +89,13 @@ function PostDetail() {
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
     })
-      .then((res) => {
-        console.log('success');
-        setLikes(res.data.result);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        .then((res) => {
+          console.log('success');
+          setLikes(res.data.result);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
   };
 
   const changePage = (pageNum) => {
@@ -125,15 +115,15 @@ function PostDetail() {
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
     })
-      .then((res) => {
-        console.log('success');
-        console.log(res);
-        setComments(res.data.result.content);
-        setTotalPage(res.data.result.totalPages);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        .then((res) => {
+          console.log('success');
+          console.log(res);
+          setComments(res.data.result.content);
+          setTotalPage(res.data.result.totalPages);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
   };
 
   const handleWriteComment = (pageNum, event) => {
@@ -148,13 +138,13 @@ function PostDetail() {
         comment: comment,
       },
     })
-      .then((res) => {
-        console.log('success');
-        handleGetComments();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        .then((res) => {
+          console.log('success');
+          handleGetComments();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
   };
 
   useEffect(() => {
@@ -163,35 +153,33 @@ function PostDetail() {
   }, '');
 
   return (
-    <DashboardLayout>
-      <MDBox pt={6} pb={3}>
-        <Card>
-          <MDBox pt={4} pb={3} px={3}>
-            <Grid container>
-              <Grid item xs={6}>
-                <MDTypography fontWeight="bold" variant="body2">
-                  {title}
-                </MDTypography>
+      <DashboardLayout>
+        <MDBox pt={6} pb={3}>
+          <Card>
+            <MDBox pt={4} pb={3} px={3}>
+              <Grid container>
+                <Grid item xs={6}>
+                  <MDTypography fontWeight="bold" variant="body2">
+                    {title}
+                  </MDTypography>
+                </Grid>
+                <Grid item xs={6}>
+                  <MDTypography variant="body2" textAlign="right">
+                    {writer}
+                  </MDTypography>
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <MDTypography variant="body2" textAlign="right">
-                  {writer}
-                </MDTypography>
-              </Grid>
-            </Grid>
-            <MDTypography variant="body2">{body}</MDTypography>
-            <MDTypography variant="body2">{likes} LIKES</MDTypography>
-          </MDBox>
-        </Card>
-      </MDBox>
+              <MDTypography variant="body2">{body}</MDTypography>
+              <MDTypography variant="body2">{likes} LIKES</MDTypography>
+            </MDBox>
+          </Card>
+        </MDBox>
 
-      <MDButton onClick={handleLikePost} variant="gradient" color="info">
-        LIKE
-      </MDButton>
+        <MDButton onClick={handleLikePost} variant="gradient" color="info">
+          LIKE
+        </MDButton>
 
-
-
-          {comments.map((comment) => (
+        {comments.map((comment) => (
             <MDBox pt={2} pb={2}>
               <Card>
                 <MDBox pt={2} pb={2} px={3}>
@@ -211,37 +199,36 @@ function PostDetail() {
                 </MDBox>
               </Card>
             </MDBox>
-          ))}
-          <MDPagination>
-            <MDPagination item>
-              <KeyboardArrowLeftIcon></KeyboardArrowLeftIcon>
-            </MDPagination>
-            {[...Array(totalPage).keys()].map((i) => (
+        ))}
+        <MDPagination>
+          <MDPagination item>
+            <KeyboardArrowLeftIcon></KeyboardArrowLeftIcon>
+          </MDPagination>
+          {[...Array(totalPage).keys()].map((i) => (
               <MDPagination item onClick={() => changePage(i)}>
                 {i + 1}
               </MDPagination>
-            ))}
-            <MDPagination item>
-              <KeyboardArrowRightIcon></KeyboardArrowRightIcon>
-            </MDPagination>
+          ))}
+          <MDPagination item>
+            <KeyboardArrowRightIcon></KeyboardArrowRightIcon>
           </MDPagination>
+        </MDPagination>
 
-
-      <MDBox pt={3} pb={3}>
-        <Card>
-          <MDBox component="form" role="form">
-            <MDBox pt={2} pb={2} px={3}>
-              <MDInput label="comment" onChange={(v) => setComment(v.target.value)} fullWidth />
+        <MDBox pt={3} pb={3}>
+          <Card>
+            <MDBox component="form" role="form">
+              <MDBox pt={2} pb={2} px={3}>
+                <MDInput label="comment" onChange={(v) => setComment(v.target.value)} fullWidth />
+              </MDBox>
+              <MDBox pt={2} pb={2} px={3} right>
+                <MDButton onClick={handleWriteComment} variant="gradient" color="info">
+                  Comment
+                </MDButton>
+              </MDBox>
             </MDBox>
-            <MDBox pt={2} pb={2} px={3} right>
-              <MDButton onClick={handleWriteComment} variant="gradient" color="info">
-                Comment
-              </MDButton>
-            </MDBox>
-          </MDBox>
-        </Card>
-      </MDBox>
-    </DashboardLayout>
+          </Card>
+        </MDBox>
+      </DashboardLayout>
   );
 }
 

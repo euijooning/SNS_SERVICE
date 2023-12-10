@@ -1,6 +1,5 @@
 package my.sns.repository;
 
-import my.sns.model.User;
 import my.sns.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 

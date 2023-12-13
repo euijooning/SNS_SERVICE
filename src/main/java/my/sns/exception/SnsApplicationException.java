@@ -10,6 +10,12 @@ public class SnsApplicationException extends RuntimeException {
     private CustomErrorCode errorCode;
     private String message;
 
+
+    public SnsApplicationException(CustomErrorCode errorCode) {
+        this.errorCode = errorCode;
+        this.message = null;
+    }
+
     @Override
     public String getMessage() {
         if (message == null) {

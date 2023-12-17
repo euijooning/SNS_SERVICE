@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -25,6 +26,9 @@ class UserServiceTest {
     @Autowired
     private UserEntityRepository userEntityRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
     @Test
     @DisplayName("회원가입 성공 테스트")
     void t1() {
@@ -34,6 +38,7 @@ class UserServiceTest {
         UserEntity fixture = UserEntityFixture.get(userName, password);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty()); // 가입된 적이 없으므로 엠프티
+        when(encoder.encode(password)).thenReturn("encrypt  password");
         when(userEntityRepository.save(any())).thenReturn(Optional.of(fixture));
 
         Assertions.assertDoesNotThrow(() -> userService.join(userName, password));
@@ -64,12 +69,13 @@ class UserServiceTest {
 
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
+        when(encoder.matches(password, fixture.getPassword())).thenReturn(true);
 
         Assertions.assertDoesNotThrow(() -> userService.login(userName, password));
     }
 
     @Test
-    @DisplayName("로그인 실패 테스트 - userName으로 가입한 회원이 없는 경우")
+    @DisplayName("로그인 실패 테스트 - 동일한 userName으로 가입한 회원이 없는 경우")
     void t4() {
         String userName = "userName";
         String password = "password";

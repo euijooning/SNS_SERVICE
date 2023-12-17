@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserDtoControllerTest {
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,7 +44,7 @@ public class UserDtoControllerTest {
 
         when(userService.join(userName, password)).thenReturn(mock(UserDto.class));
 
-        mockMvc.perform(post("api/v1/users/join")
+        mockMvc.perform(post("/api/v1/users/join")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName, password)))
         )
@@ -60,7 +60,7 @@ public class UserDtoControllerTest {
 
         when(userService.join(userName, password)).thenThrow(new SnsApplicationException(CustomErrorCode.DUPLICATED_USER_NAME, ""));
 
-        mockMvc.perform(post("api/v1/users/join")
+        mockMvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName, password)))
                 )
@@ -77,12 +77,12 @@ public class UserDtoControllerTest {
 
         when(userService.login(userName, password)).thenReturn("test_token");
 
-        mockMvc.perform(post("api/v1/users/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName, password)))
                 )
                 .andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().isOk());
     }
 
 
@@ -92,9 +92,9 @@ public class UserDtoControllerTest {
         String userName = "userName";
         String password = "password";
 
-        when(userService.login(userName, password)).thenThrow(new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, ""));
+        when(userService.login(userName, password)).thenThrow(new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND));
 
-        mockMvc.perform(post("api/v1/users/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName, password)))
                 )
@@ -110,14 +110,13 @@ public class UserDtoControllerTest {
         String userName = "userName";
         String password = "password";
 
-        when(userService.login(userName, password)).thenThrow(new SnsApplicationException(CustomErrorCode.INVALID_PASSWORD, ""));
+        when(userService.login(userName, password)).thenThrow(new SnsApplicationException(CustomErrorCode.INVALID_PASSWORD));
 
-        mockMvc.perform(post("api/v1/users/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName, password)))
                 )
                 .andDo(print())
-//                .andExpect(status().isUnauthorized());
                 .andExpect(status().is(CustomErrorCode.INVALID_PASSWORD.getStatus().value()));
     }
 }

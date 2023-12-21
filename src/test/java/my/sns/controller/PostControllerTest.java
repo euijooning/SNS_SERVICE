@@ -2,6 +2,9 @@ package my.sns.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import my.sns.dto.request.PostCreateRequest;
+import my.sns.exception.CustomErrorCode;
+import my.sns.exception.SnsApplicationException;
+import my.sns.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,9 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,6 +31,9 @@ public class PostControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private PostService postService;
 
 
     @DisplayName("포스트 작성 성공")
@@ -58,5 +67,53 @@ public class PostControllerTest {
                         .content(objectMapper.writeValueAsBytes(new PostCreateRequest(title, body)))
                 ).andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+
+    @DisplayName("포스트 삭제 성공")
+    @Test
+    @WithMockUser
+    void t3() throws Exception {
+        mockMvc.perform(delete("/api/v1/posts/1")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+    @DisplayName("포스트 삭제 실패 - 로그인하지 않은 경우")
+    @WithAnonymousUser
+    @Test
+    void t4() throws Exception {
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+
+    }
+
+    @DisplayName("포스트 삭제 실패 - 글 작성자와 삭제 요청자 불일치")
+    @WithMockUser
+    @Test
+    void t5() throws Exception {
+        doThrow(new SnsApplicationException(CustomErrorCode.INVALID_PERMISSION)).when(postService).deletePost(any(), any());
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+
+    }
+
+    @DisplayName("포스트 삭제 실패 - 삭제하려는 글이 없음")
+    @WithAnonymousUser
+    @Test
+    void t6() throws Exception {
+        doThrow(new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND)).when(postService).deletePost(any(), any());
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isNotFound());
     }
 }

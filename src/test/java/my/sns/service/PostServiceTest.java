@@ -2,6 +2,7 @@ package my.sns.service;
 
 import my.sns.exception.CustomErrorCode;
 import my.sns.exception.SnsApplicationException;
+import my.sns.fixture.PostEntityFixture;
 import my.sns.model.entity.PostEntity;
 import my.sns.model.entity.UserEntity;
 import my.sns.repository.PostEntityRepository;
@@ -62,4 +63,54 @@ public class PostServiceTest {
         assertEquals(CustomErrorCode.USER_NOT_FOUND, error.getErrorCode());
 
     }
+
+    @DisplayName("포스트 삭제 성공")
+    @Test
+    void t3() {
+        String userName = "userName";
+        Integer postId = 1;
+
+        PostEntity postEntity = PostEntityFixture.get(userName, postId, 1);
+        UserEntity userEntity = postEntity.getUser();
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
+
+        assertDoesNotThrow(() -> postService.deletePost("userName", 1));
+    }
+
+
+    @DisplayName("포스트 삭제 실패 - 글이 존재하지 않는 경우")
+    @Test
+    void t4() {
+        String userName = "userName";
+        Integer postId = 1;
+
+        PostEntity postEntity = PostEntityFixture.get(userName, postId, 1);
+        UserEntity userEntity = postEntity.getUser();
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.empty());
+
+        SnsApplicationException e = assertThrows(SnsApplicationException.class, () -> postService.deletePost("userName", 1));
+        assertEquals(CustomErrorCode.POST_NOT_FOUND, e.getErrorCode());
+    }
+
+    @DisplayName("포스트 삭제 실패 - 글 삭제 시 요청자가 권한이 없는 경우")
+    @Test
+    void t5() {
+        String userName = "userName";
+        Integer postId = 1;
+
+        PostEntity postEntity = PostEntityFixture.get(userName, postId, 1);
+        UserEntity userEntity = postEntity.getUser();
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.empty());
+
+        SnsApplicationException e = assertThrows(SnsApplicationException.class, () -> postService.deletePost("userName", 1));
+        assertEquals(CustomErrorCode.INVALID_PERMISSION, e.getErrorCode());
+    }
+
+
 }

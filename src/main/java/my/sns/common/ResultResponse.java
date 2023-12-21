@@ -15,6 +15,10 @@ public class ResultResponse<T> {
         return new ResultResponse<>("SUCCESS", result);
     }
 
+    public static ResultResponse<Void> success() {
+        return new ResultResponse<Void>("SUCCESS", null);
+    }
+
     public static ResultResponse<Void> error(String errorCode) {
         return new ResultResponse<>(errorCode, null);
     }

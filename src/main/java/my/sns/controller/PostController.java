@@ -21,7 +21,7 @@ public class PostController {
     public ResultResponse<Void> createPost(@RequestBody PostCreateRequest request, Authentication authentication) {
         postService.createPost(request.getTitle(), request.getBody(), authentication.getName());
 
-        return ResultResponse.success(null);
+        return ResultResponse.success();
 
     }
 }

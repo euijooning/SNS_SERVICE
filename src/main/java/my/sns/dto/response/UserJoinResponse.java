@@ -20,7 +20,7 @@ public class UserJoinResponse {
 
         return new UserJoinResponse(
                 dto.getId(),
-                dto.getPassword(),
+                dto.getUsername(),
                 dto.getRole()
         );
     }

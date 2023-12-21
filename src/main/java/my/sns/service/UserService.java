@@ -1,11 +1,11 @@
 package my.sns.service;
 
 import lombok.RequiredArgsConstructor;
-import my.sns.exception.CustomErrorCode;
-import my.sns.repository.UserEntityRepository;
-import my.sns.exception.SnsApplicationException;
 import my.sns.dto.UserDto;
+import my.sns.exception.CustomErrorCode;
+import my.sns.exception.SnsApplicationException;
 import my.sns.model.entity.UserEntity;
+import my.sns.repository.UserEntityRepository;
 import my.sns.util.JwtTokenUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,6 +25,13 @@ public class UserService {
 
     @Value("${jwt.token.expired-time-ms}")
     private Long expiredMs;
+
+    public UserDto loadUserByUserName(String userName) {
+        return userEntityRepository.findByUserName(userName)
+                .map(UserDto::fromEntity)
+                .orElseThrow(() ->
+                        new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not found", userName)));
+    }
 
 
     @Transactional

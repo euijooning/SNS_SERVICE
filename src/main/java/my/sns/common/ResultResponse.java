@@ -15,7 +15,25 @@ public class ResultResponse<T> {
         return new ResultResponse<>("SUCCESS", result);
     }
 
+    public static ResultResponse<Void> success() {
+        return new ResultResponse<Void>("SUCCESS", null);
+    }
+
     public static ResultResponse<Void> error(String errorCode) {
         return new ResultResponse<>(errorCode, null);
+    }
+
+    // 결과 깔끔하게 출력해주는 메서드
+    public String toStream() {
+        if (result == null) {
+            return "{" +
+                    "\"resultCode\":" + "\"" + resultCode + "\"," +
+                    "\"result\":" + null +
+                    "}";
+        }
+        return "{" +
+                "\"resultCode\":" + "\"" + resultCode + "\"," +
+                "\"result\":" + "\"" + result + "\"," +
+                "}";
     }
 }

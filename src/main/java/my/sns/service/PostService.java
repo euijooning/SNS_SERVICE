@@ -50,4 +50,21 @@ public class PostService {
         // post 삭제
         postEntityRepository.delete(postEntity);
     }
+
+    // 포스트 수정
+    @Transactional
+    public void modifyPost(String title, String body, String userName, Integer postId) {
+        // 유저 찾아오기
+        UserEntity userEntity = userEntityRepository.findByUserName(userName)
+                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
+
+        // 포스트 존재 여부 확인
+        PostEntity postEntity = postEntityRepository.findById(postId)
+                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("%s not founded", userName, postId)));
+
+        // Post Permission
+        if (postEntity.getUser() != userEntity) {
+            throw new SnsApplicationException(CustomErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", userName, postId));
+        }
+    }
 }

@@ -2,6 +2,7 @@ package my.sns.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import my.sns.dto.request.PostCreateRequest;
+import my.sns.dto.request.PostModifyRequest;
 import my.sns.exception.CustomErrorCode;
 import my.sns.exception.SnsApplicationException;
 import my.sns.service.PostService;
@@ -16,9 +17,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -113,6 +114,68 @@ public class PostControllerTest {
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+
+    @WithMockUser
+    @DisplayName("포스트 수정 성공")
+    @Test
+    void t7() throws Exception{
+        String title = "title";
+        String body = "body";
+
+        mockMvc.perform(put("/api/v1/posts/1")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(new PostModifyRequest(title, body)))
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @WithAnonymousUser
+    @DisplayName("포스트 수정 실패 - 로그인 하지 않은 경우의 요청")
+    @Test
+    void t8() throws Exception{
+        String title = "title";
+        String body = "body";
+
+        mockMvc.perform(put("/api/v1/posts/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new PostModifyRequest(title, body)))
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+
+    @WithMockUser
+    @DisplayName("포스트 수정 실패 - 요청자와 글 작성자가 일치하지 않은 경우")
+    @Test
+    void t9() throws Exception{
+        String title = "title";
+        String body = "body";
+
+        doThrow(new SnsApplicationException(CustomErrorCode.INVALID_PERMISSION)).when(postService).modifyPost(eq(title), eq(body), any(), eq(1));
+
+        mockMvc.perform(put("/api/v1/posts/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new PostModifyRequest(title, body)))
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @WithMockUser
+    @DisplayName("포스트 수정 실패 - 수정하려는 해당 글이 없는 경우")
+    @Test
+    void t10() throws Exception{
+        String title = "title";
+        String body = "body";
+
+        doThrow(new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND)).when(postService).modifyPost(eq(title), eq(body), any(), eq(1));
+
+        mockMvc.perform(put("/api/v1/posts/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new PostModifyRequest(title, body)))
                 ).andDo(print())
                 .andExpect(status().isNotFound());
     }

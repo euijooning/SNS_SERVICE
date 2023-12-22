@@ -1,10 +1,12 @@
 package my.sns.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import my.sns.dto.PostForm;
 import my.sns.dto.request.PostCreateRequest;
 import my.sns.dto.request.PostModifyRequest;
 import my.sns.exception.CustomErrorCode;
 import my.sns.exception.SnsApplicationException;
+import my.sns.fixture.PostEntityFixture;
 import my.sns.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -126,6 +129,9 @@ public class PostControllerTest {
     void t7() throws Exception{
         String title = "title";
         String body = "body";
+
+        when(postService.modifyPost(eq(title), eq(body), any(), any()))
+                .thenReturn(PostForm.fromEntity(PostEntityFixture.get("userName", 1, 1)));
 
         mockMvc.perform(put("/api/v1/posts/1")
                     .contentType(MediaType.APPLICATION_JSON)

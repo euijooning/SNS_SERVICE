@@ -32,4 +32,11 @@ public class PostController {
         PostForm post = postService.modifyPost(request.getTitle(), request.getBody(), authentication.getName(), postId);
         return ResultResponse.success(PostResponse.fromPost(post));
     }
+
+
+    @DeleteMapping("/{postId}")
+    public ResultResponse<Void> deletePost(@PathVariable Integer postId, Authentication authentication) {
+        postService.deletePost(authentication.getName(), postId);
+        return ResultResponse.success();
+    }
 }

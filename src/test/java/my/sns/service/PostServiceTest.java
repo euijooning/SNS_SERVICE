@@ -163,7 +163,7 @@ public class PostServiceTest {
         // mocking
         PostEntity postEntity = PostEntityFixture.get(userName, postId, 1);
         UserEntity userEntity = postEntity.getUser();
-        UserEntity writer = UserEntityFixture.get("userName1", "password");
+        UserEntity writer = UserEntityFixture.get("userName1", "password", 2); // 일부러 다르게 설정
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
         when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));

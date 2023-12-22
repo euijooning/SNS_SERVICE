@@ -2,7 +2,7 @@ package my.sns.filter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import my.sns.dto.UserDto;
+import my.sns.dto.UserForm;
 import my.sns.service.UserService;
 import my.sns.util.JwtTokenUtils;
 import org.springframework.http.HttpHeaders;
@@ -49,7 +49,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             // get Username from token
             String userName = JwtTokenUtils.getUserName(token, key);
             // check the userName is valid
-            UserDto user = userService.loadUserByUserName(userName);
+            UserForm user = userService.loadUserByUserName(userName);
 
             UsernamePasswordAuthenticationToken authentication
                     = new UsernamePasswordAuthenticationToken(user, null , user.getAuthorities());

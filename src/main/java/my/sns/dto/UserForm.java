@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserDto implements UserDetails {
+public class UserForm implements UserDetails {
 
     private Integer id;
     private String userName;
@@ -27,9 +27,9 @@ public class UserDto implements UserDetails {
     private Timestamp deletedAt;
 
 
-    public static UserDto fromEntity(UserEntity entity) {
+    public static UserForm fromEntity(UserEntity entity) {
 
-        return new UserDto(
+        return new UserForm(
                 entity.getId(),
                 entity.getUserName(),
                 entity.getPassword(),

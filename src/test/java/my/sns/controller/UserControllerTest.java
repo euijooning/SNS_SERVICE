@@ -1,7 +1,7 @@
 package my.sns.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import my.sns.dto.UserDto;
+import my.sns.dto.UserForm;
 import my.sns.dto.request.UserJoinRequest;
 import my.sns.dto.request.UserLoginRequest;
 import my.sns.exception.CustomErrorCode;
@@ -42,7 +42,7 @@ public class UserControllerTest {
         String userName = "userName";
         String password = "password";
 
-        when(userService.join(userName, password)).thenReturn(mock(UserDto.class));
+        when(userService.join(userName, password)).thenReturn(mock(UserForm.class));
 
         mockMvc.perform(post("/api/v1/users/join")
                 .contentType(MediaType.APPLICATION_JSON)

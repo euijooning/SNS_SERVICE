@@ -1,7 +1,7 @@
 package my.sns.service;
 
 import lombok.RequiredArgsConstructor;
-import my.sns.dto.UserDto;
+import my.sns.dto.UserForm;
 import my.sns.exception.CustomErrorCode;
 import my.sns.exception.SnsApplicationException;
 import my.sns.model.entity.UserEntity;
@@ -26,16 +26,16 @@ public class UserService {
     @Value("${jwt.token.expired-time-ms}")
     private Long expiredMs;
 
-    public UserDto loadUserByUserName(String userName) {
+    public UserForm loadUserByUserName(String userName) {
         return userEntityRepository.findByUserName(userName)
-                .map(UserDto::fromEntity)
+                .map(UserForm::fromEntity)
                 .orElseThrow(() ->
                         new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not found", userName)));
     }
 
 
     @Transactional
-    public UserDto join(String userName, String password) {
+    public UserForm join(String userName, String password) {
         // 회원가입 된 user 유저 체크
         userEntityRepository.findByUserName(userName)
                 .ifPresent(it -> {
@@ -45,7 +45,7 @@ public class UserService {
         // 회원가입 - user 등록
         UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, encoder.encode(password)));
 //        throw new RuntimeException();
-        return UserDto.fromEntity(userEntity);
+        return UserForm.fromEntity(userEntity);
     }
 
     public String login(String userName, String password) {

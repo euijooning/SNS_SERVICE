@@ -3,7 +3,7 @@ package my.sns.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import my.sns.dto.UserDto;
+import my.sns.dto.UserForm;
 import my.sns.enums.UserRole;
 
 @Getter
@@ -16,7 +16,7 @@ public class UserJoinResponse {
     private UserRole role;
 
 
-    public static UserJoinResponse fromUser(UserDto dto) {
+    public static UserJoinResponse fromUser(UserForm dto) {
 
         return new UserJoinResponse(
                 dto.getId(),

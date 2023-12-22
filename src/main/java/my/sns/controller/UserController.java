@@ -2,7 +2,7 @@ package my.sns.controller;
 
 import lombok.RequiredArgsConstructor;
 import my.sns.common.ResultResponse;
-import my.sns.dto.UserDto;
+import my.sns.dto.UserForm;
 import my.sns.dto.request.UserJoinRequest;
 import my.sns.dto.request.UserLoginRequest;
 import my.sns.dto.response.UserJoinResponse;
@@ -23,7 +23,7 @@ public class UserController {
     @PostMapping("/join")
     public ResultResponse<UserJoinResponse> join(@RequestBody UserJoinRequest request) {
         // join
-        UserDto user = userService.join(request.getUserName(), request.getPassword());
+        UserForm user = userService.join(request.getUserName(), request.getPassword());
         UserJoinResponse response = UserJoinResponse.fromUser(user);
 
         return ResultResponse.success(response);

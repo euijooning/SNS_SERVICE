@@ -1,6 +1,7 @@
 package my.sns.service;
 
 import lombok.RequiredArgsConstructor;
+import my.sns.dto.PostForm;
 import my.sns.exception.CustomErrorCode;
 import my.sns.exception.SnsApplicationException;
 import my.sns.model.entity.PostEntity;
@@ -53,7 +54,7 @@ public class PostService {
 
     // 포스트 수정
     @Transactional
-    public void modifyPost(String title, String body, String userName, Integer postId) {
+    public PostForm modifyPost(String title, String body, String userName, Integer postId) {
         // 유저 찾아오기
         UserEntity userEntity = userEntityRepository.findByUserName(userName)
                 .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
@@ -63,8 +64,14 @@ public class PostService {
                 .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("%s not founded", userName, postId)));
 
         // Post Permission
-        if (postEntity.getUser() != userEntity) {
+        if (postEntity.getUser() != userEntity) { // 권한이 없는 경우임.
             throw new SnsApplicationException(CustomErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", userName, postId));
         }
+
+        // 저장해주기
+        postEntity.setTitle(title);
+        postEntity.setBody(body);
+
+        return PostForm.fromEntity(postEntityRepository.saveAndFlush(postEntity));
     }
 }

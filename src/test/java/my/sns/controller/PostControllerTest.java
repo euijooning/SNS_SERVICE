@@ -111,7 +111,7 @@ public class PostControllerTest {
     }
 
     @DisplayName("포스트 삭제 실패 - 삭제하려는 글이 없음")
-    @WithAnonymousUser
+    @WithMockUser
     @Test
     void t6() throws Exception {
         doThrow(new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND)).when(postService).deletePost(any(), any());

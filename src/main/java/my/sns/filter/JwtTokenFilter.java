@@ -30,7 +30,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         // 헤더 가져오기
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header == null || !header.startsWith("Bearer ")) { //에러인 경우
-            log.error("Error occurs while getting header. Header is null or invalid");
+            log.error("Error occurs while getting header. Header is null or invalid {}", request.getRequestURL());
             filterChain.doFilter(request, response);
             return;
         }

@@ -180,7 +180,6 @@ public class PostServiceTest {
     @DisplayName("피드 목록 조회 성공")
     @Test
     void t9() {
-
         Pageable pageable = mock(Pageable.class);
         when(postEntityRepository.findAll(pageable)).thenReturn(Page.empty());
 
@@ -190,8 +189,9 @@ public class PostServiceTest {
     @DisplayName("나의 피드 목록 조회 성공")
     @Test
     void t10() {
-
         Pageable pageable = mock(Pageable.class);
+        UserEntity user = mock(UserEntity.class);
+        when(userEntityRepository.findByUserName(any())).thenReturn(Optional.of(user));
         when(postEntityRepository.findAll(pageable)).thenReturn(Page.empty());
 
         assertDoesNotThrow(() -> postService.myFeed(any(), pageable));

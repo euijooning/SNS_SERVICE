@@ -8,7 +8,9 @@ import my.sns.model.entity.PostEntity;
 import my.sns.model.entity.UserEntity;
 import my.sns.repository.PostEntityRepository;
 import my.sns.repository.UserEntityRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import javax.transaction.Transactional;
 
@@ -73,5 +75,19 @@ public class PostService {
         postEntity.setBody(body);
 
         return PostForm.fromEntity(postEntityRepository.saveAndFlush(postEntity));
+    }
+
+
+
+    public Page<PostForm> list(Pageable pageable) {
+        return postEntityRepository.findAll(pageable).map(PostForm::fromEntity);
+    }
+
+    public Page<PostForm> myFeed(String userName, Pageable pageable) {
+        // 유저 찾아오기
+        UserEntity userEntity = userEntityRepository.findByUserName(userName)
+                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
+
+        return postEntityRepository.findAllByUser(userEntity, pageable).map(PostForm::fromEntity);
     }
 }

@@ -7,8 +7,11 @@ import my.sns.dto.request.PostCreateRequest;
 import my.sns.dto.request.PostModifyRequest;
 import my.sns.dto.response.PostResponse;
 import my.sns.service.PostService;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -39,4 +42,16 @@ public class PostController {
         postService.deletePost(authentication.getName(), postId);
         return ResultResponse.success();
     }
+
+
+    @GetMapping
+    public ResultResponse<Page<PostResponse>> list(Pageable pageable, Authentication authentication) {
+        return ResultResponse.success(postService.list(pageable).map(PostResponse::fromPost));
+    }
+
+    @GetMapping
+    public ResultResponse<Page<PostResponse>> myFeed(Pageable pageable, Authentication authentication) {
+        return ResultResponse.success(postService.myFeed(authentication.getName(), pageable).map(PostResponse::fromPost));
+    }
+
 }

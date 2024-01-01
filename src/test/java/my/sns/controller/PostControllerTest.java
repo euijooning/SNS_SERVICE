@@ -248,7 +248,7 @@ public class PostControllerTest {
         mockMvc.perform(post("/api/v1/posts/1/likes")
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk());
     }
 
     @DisplayName("좋아요 버튼 클릭 시 - 로그인하지 않은 경우")

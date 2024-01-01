@@ -114,14 +114,10 @@ public class PostService {
         likeEntityRepository.save(LikeEntity.of(userEntity, postEntity));
     }
 
-    public int likeCount(Integer postId) {
-        // 포스트 존재 여부 확인
+    public Integer getLikeCount(Integer postId) {
         PostEntity postEntity = postEntityRepository.findById(postId)
-                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("%s not founded", postId)));
-
-        // 좋아요 눌렀는지를 가져오기
-        List<LikeEntity> likeEntities = likeEntityRepository.findAllByPost(postEntity);
-        return likeEntities.size();
-
+                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("postId is %d", postId)));
+        List<LikeEntity> likes = likeEntityRepository.findAllByPost(postEntity);
+        return likes.size();
     }
 }

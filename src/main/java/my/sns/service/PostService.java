@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -98,7 +99,7 @@ public class PostService {
     public void like(Integer postId, String userName) {
         // 포스트 존재 여부 확인
         PostEntity postEntity = postEntityRepository.findById(postId)
-                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("%s not founded", userName, postId)));
+                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("%s not founded", postId)));
 
         // 유저 찾아오기
         UserEntity userEntity = userEntityRepository.findByUserName(userName)
@@ -111,5 +112,16 @@ public class PostService {
 
         // 좋아요 저장
         likeEntityRepository.save(LikeEntity.of(userEntity, postEntity));
+    }
+
+    public int likeCount(Integer postId) {
+        // 포스트 존재 여부 확인
+        PostEntity postEntity = postEntityRepository.findById(postId)
+                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("%s not founded", postId)));
+
+        // 좋아요 눌렀는지를 가져오기
+        List<LikeEntity> likeEntities = likeEntityRepository.findAllByPost(postEntity);
+        return likeEntities.size();
+
     }
 }

@@ -45,7 +45,7 @@ public class PostController {
 
 
     @GetMapping
-    public ResultResponse<Page<PostResponse>> list(Pageable pageable, Authentication authentication) {
+    public ResultResponse<Page<PostResponse>> list(Pageable pageable) {
         return ResultResponse.success(postService.list(pageable).map(PostResponse::fromPost));
     }
 
@@ -59,5 +59,11 @@ public class PostController {
     public ResultResponse<Void> like(@PathVariable Integer postId, Authentication authentication) {
         postService.like(postId, authentication.getName());
         return ResultResponse.success();
+    }
+
+    @GetMapping("/{postId}/likes")
+    public ResultResponse<Integer> likeCount(@PathVariable Integer postId) {
+        int count = postService.likeCount(postId);
+        return ResultResponse.success(count);
     }
 }

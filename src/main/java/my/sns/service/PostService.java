@@ -90,4 +90,9 @@ public class PostService {
 
         return postEntityRepository.findAllByUser(userEntity, pageable).map(PostForm::fromEntity);
     }
+
+    @Transactional
+    public void like(Integer postId, String userName) {
+
+    }
 }

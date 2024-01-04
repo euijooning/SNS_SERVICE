@@ -10,7 +10,9 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-@Table(name = "\"comment\"")
+@Table(name = "\"comment\"", indexes = {
+        @Index(name = "post_id_idx", columnList = "post_id")
+})
 @Getter
 @Setter
 @SQLDelete(sql = "UPDATE \"comment\" SET deleted_at = NOW() WHERE id=?")

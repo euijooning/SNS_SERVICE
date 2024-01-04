@@ -1,12 +1,15 @@
 package my.sns.service;
 
 import lombok.RequiredArgsConstructor;
+import my.sns.dto.CommentForm;
 import my.sns.dto.PostForm;
 import my.sns.exception.CustomErrorCode;
 import my.sns.exception.SnsApplicationException;
+import my.sns.model.entity.CommentEntity;
 import my.sns.model.entity.LikeEntity;
 import my.sns.model.entity.PostEntity;
 import my.sns.model.entity.UserEntity;
+import my.sns.repository.CommentEntityRepository;
 import my.sns.repository.LikeEntityRepository;
 import my.sns.repository.PostEntityRepository;
 import my.sns.repository.UserEntityRepository;
@@ -24,6 +27,7 @@ public class PostService {
     private final PostEntityRepository postEntityRepository;
     private final UserEntityRepository userEntityRepository;
     private final LikeEntityRepository likeEntityRepository;
+    private final CommentEntityRepository commentEntityRepository;
 
 
     @Transactional
@@ -116,6 +120,24 @@ public class PostService {
     }
 
 
+    @Transactional
+    public void comment(Integer postId, String userName, String comment) {
+        // 포스트 존재 여부 확인
+        PostEntity postEntity = getPostEntityOrException(postId);
+
+        // 유저 찾아오기
+        UserEntity userEntity = getUserEntityOrException(userName);
+
+        //comment save
+        commentEntityRepository.save(CommentEntity.of(userEntity, postEntity, comment));
+
+    }
+
+    public Page<CommentForm> getComments(Integer postId, Pageable pageable) {
+        // 포스트 존재 여부 확인
+        PostEntity postEntity = getPostEntityOrException(postId);
+        return commentEntityRepository.findAllByPost(postEntity, pageable).map(CommentForm::fromEntity);
+    }
 
 
     private PostEntity getPostEntityOrException(Integer postId) {

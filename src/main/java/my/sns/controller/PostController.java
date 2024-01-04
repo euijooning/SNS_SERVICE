@@ -3,15 +3,16 @@ package my.sns.controller;
 import lombok.RequiredArgsConstructor;
 import my.sns.common.ResultResponse;
 import my.sns.dto.PostForm;
+import my.sns.dto.request.PostCommentRequest;
 import my.sns.dto.request.PostCreateRequest;
 import my.sns.dto.request.PostModifyRequest;
+import my.sns.dto.response.CommentResponse;
 import my.sns.dto.response.PostResponse;
 import my.sns.service.PostService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -64,5 +65,22 @@ public class PostController {
     @GetMapping("/{postId}/likes")
     public ResultResponse<Integer> getLikes(@PathVariable Integer postId, Authentication authentication) {
         return ResultResponse.success(postService.getLikeCount(postId));
+    }
+
+    @PostMapping("/{postId}/comments")
+    public ResultResponse<Void> comment(@PathVariable Integer postId,
+                                        @RequestBody PostCommentRequest postCommentRequest,
+                                        Authentication authentication) {
+
+        postService.comment(postId, postCommentRequest.getComment(), authentication.getName());
+        return ResultResponse.success();
+    }
+
+    @GetMapping("/{postId}/comments")
+    public ResultResponse<Page<CommentResponse>> comment(@PathVariable Integer postId,
+                                                         Pageable pageable,
+                                                         Authentication authentication) {
+        Page<CommentResponse> commentList = postService.getComments(postId, pageable).map(CommentResponse::fromComment);
+        return ResultResponse.success(commentList);
     }
 }

@@ -2,6 +2,7 @@ package my.sns.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import my.sns.dto.PostForm;
+import my.sns.dto.request.PostCommentRequest;
 import my.sns.dto.request.PostCreateRequest;
 import my.sns.dto.request.PostModifyRequest;
 import my.sns.exception.CustomErrorCode;
@@ -268,6 +269,40 @@ public class PostControllerTest {
         doThrow(new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND)).when(postService).like(any(), any());
         mockMvc.perform(post("/api/v1/posts/1/likes")
                         .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("댓글 기능")
+    @WithMockUser
+    @Test
+    void t18() throws Exception {
+        mockMvc.perform(post("/api/v1/posts/1/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new PostCommentRequest("comment")))
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("댓글 작성 시 - 로그인하지 않은 경우")
+    @WithAnonymousUser
+    @Test
+    void t19() throws Exception {
+        mockMvc.perform(get("/api/v1/posts/1/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new PostCommentRequest("comment")))
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("댓글 작성 시 - 게시글이 없는 경우")
+    @WithMockUser
+    @Test
+    void t20() throws Exception {
+        doThrow(new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND)).when(postService).comment(any(), any(), any());
+        mockMvc.perform(post("/api/v1/posts/1/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new PostCommentRequest("comment")))
                 ).andDo(print())
                 .andExpect(status().isNotFound());
     }

@@ -1,12 +1,15 @@
 package my.sns.service;
 
 import lombok.RequiredArgsConstructor;
+import my.sns.dto.CommentForm;
 import my.sns.dto.PostForm;
 import my.sns.exception.CustomErrorCode;
 import my.sns.exception.SnsApplicationException;
+import my.sns.model.entity.CommentEntity;
 import my.sns.model.entity.LikeEntity;
 import my.sns.model.entity.PostEntity;
 import my.sns.model.entity.UserEntity;
+import my.sns.repository.CommentEntityRepository;
 import my.sns.repository.LikeEntityRepository;
 import my.sns.repository.PostEntityRepository;
 import my.sns.repository.UserEntityRepository;
@@ -24,6 +27,7 @@ public class PostService {
     private final PostEntityRepository postEntityRepository;
     private final UserEntityRepository userEntityRepository;
     private final LikeEntityRepository likeEntityRepository;
+    private final CommentEntityRepository commentEntityRepository;
 
 
     @Transactional
@@ -62,12 +66,10 @@ public class PostService {
     @Transactional
     public PostForm modifyPost(String title, String body, String userName, Integer postId) {
         // 유저 찾아오기
-        UserEntity userEntity = userEntityRepository.findByUserName(userName)
-                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
+        UserEntity userEntity = getUserEntityOrException(userName);
 
         // 포스트 존재 여부 확인
-        PostEntity postEntity = postEntityRepository.findById(postId)
-                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("%s not founded", userName, postId)));
+        PostEntity postEntity = getPostEntityOrException(postId);
 
         // Post Permission
         if (postEntity.getUser() != userEntity) { // 권한이 없는 경우임.
@@ -89,8 +91,7 @@ public class PostService {
 
     public Page<PostForm> myFeed(String userName, Pageable pageable) {
         // 유저 찾아오기
-        UserEntity userEntity = userEntityRepository.findByUserName(userName)
-                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
+        UserEntity userEntity = getUserEntityOrException(userName);
 
         return postEntityRepository.findAllByUser(userEntity, pageable).map(PostForm::fromEntity);
     }
@@ -98,12 +99,10 @@ public class PostService {
     @Transactional
     public void like(Integer postId, String userName) {
         // 포스트 존재 여부 확인
-        PostEntity postEntity = postEntityRepository.findById(postId)
-                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("%s not founded", postId)));
+        PostEntity postEntity = getPostEntityOrException(postId);
 
         // 유저 찾아오기
-        UserEntity userEntity = userEntityRepository.findByUserName(userName)
-                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
+        UserEntity userEntity = getUserEntityOrException(userName);
 
         // 좋아요 눌렀는지를 체크 -> 이미 눌렀으면  throw
         likeEntityRepository.findByUserAndPost(userEntity, postEntity).ifPresent(it -> {
@@ -115,9 +114,42 @@ public class PostService {
     }
 
     public Integer getLikeCount(Integer postId) {
-        PostEntity postEntity = postEntityRepository.findById(postId)
-                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("postId is %d", postId)));
+        PostEntity postEntity = getPostEntityOrException(postId);
         List<LikeEntity> likes = likeEntityRepository.findAllByPost(postEntity);
         return likes.size();
+    }
+
+
+    @Transactional
+    public void comment(Integer postId, String userName, String comment) {
+        // 포스트 존재 여부 확인
+        PostEntity postEntity = getPostEntityOrException(postId);
+
+        // 유저 찾아오기
+        UserEntity userEntity = getUserEntityOrException(userName);
+
+        //comment save
+        commentEntityRepository.save(CommentEntity.of(userEntity, postEntity, comment));
+
+    }
+
+    public Page<CommentForm> getComments(Integer postId, Pageable pageable) {
+        // 포스트 존재 여부 확인
+        PostEntity postEntity = getPostEntityOrException(postId);
+        return commentEntityRepository.findAllByPost(postEntity, pageable).map(CommentForm::fromEntity);
+    }
+
+
+    private PostEntity getPostEntityOrException(Integer postId) {
+        // 포스트 존재 여부 확인
+        return postEntityRepository.findById(postId)
+                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.POST_NOT_FOUND, String.format("%s not founded", postId)));
+
+    }
+
+    private UserEntity getUserEntityOrException(String userName) {
+        // 유저 찾아오기
+        return userEntityRepository.findByUserName(userName)
+                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
     }
 }

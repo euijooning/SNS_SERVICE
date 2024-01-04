@@ -1,6 +1,7 @@
 package my.sns.model.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -14,6 +15,7 @@ import java.time.Instant;
 @Setter
 @SQLDelete(sql = "UPDATE \"comment\" SET deleted_at = NOW() WHERE id=?")
 @Where(clause = "deleted_at is NULL")
+@NoArgsConstructor
 @Entity
 public class CommentEntity {
 
@@ -21,7 +23,7 @@ public class CommentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne // 유저 하나가 여러 포스트 작성
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
 

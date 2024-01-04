@@ -69,18 +69,15 @@ public class PostController {
 
     @PostMapping("/{postId}/comments")
     public ResultResponse<Void> comment(@PathVariable Integer postId,
-                                        @RequestBody PostCommentRequest postCommentRequest,
+                                        @RequestBody PostCommentRequest request,
                                         Authentication authentication) {
-
-        postService.comment(postId, postCommentRequest.getComment(), authentication.getName());
+        postService.comment(postId, authentication.getName(), request.getComment());
         return ResultResponse.success();
     }
 
     @GetMapping("/{postId}/comments")
-    public ResultResponse<Page<CommentResponse>> comment(@PathVariable Integer postId,
-                                                         Pageable pageable,
-                                                         Authentication authentication) {
-        Page<CommentResponse> commentList = postService.getComments(postId, pageable).map(CommentResponse::fromComment);
-        return ResultResponse.success(commentList);
+    public ResultResponse<Page<CommentResponse>> getComments(Pageable pageable,
+                                                             @PathVariable Integer postId) {
+        return ResultResponse.success(postService.getComments(postId, pageable).map(CommentResponse::fromComment));
     }
 }

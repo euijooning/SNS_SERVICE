@@ -12,6 +12,7 @@ public class CommentForm {
 
     private Integer id;
     private String comment;
+    private Integer userId;
     private String userName;
     private Integer postId;
     private Timestamp registeredAt;
@@ -23,6 +24,7 @@ public class CommentForm {
         return new CommentForm(
                 entity.getId(),
                 entity.getComment(),
+                entity.getUser().getId(),
                 entity.getUser().getUserName(),
                 entity.getPost().getId(),
                 entity.getRegisteredAt(),

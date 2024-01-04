@@ -152,6 +152,4 @@ public class PostService {
         return userEntityRepository.findByUserName(userName)
                 .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
     }
-
-
 }

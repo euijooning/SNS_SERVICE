@@ -5,13 +5,14 @@ import my.sns.common.ResultResponse;
 import my.sns.dto.UserForm;
 import my.sns.dto.request.UserJoinRequest;
 import my.sns.dto.request.UserLoginRequest;
+import my.sns.dto.response.AlarmResponse;
 import my.sns.dto.response.UserJoinResponse;
 import my.sns.dto.response.UserLoginResponse;
 import my.sns.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -33,5 +34,10 @@ public class UserController {
     public ResultResponse<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
         String token = userService.login(request.getName(), request.getPassword());
         return ResultResponse.success(new UserLoginResponse(token));
+    }
+
+    @GetMapping("/alarm")
+    public ResultResponse<Page<AlarmResponse>> alarm(Pageable pageable, Authentication authentication) {
+      return ResultResponse.success(userService.alarmList(authentication.getName(), pageable).map(AlarmResponse::fromAlarm));
     }
 }

@@ -1,14 +1,12 @@
 package my.sns.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import my.sns.model.entity.PostEntity;
 
 import java.sql.Timestamp;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class PostForm {
 

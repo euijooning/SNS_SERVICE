@@ -1,10 +1,9 @@
 package my.sns.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import my.sns.model.entity.UserEntity;
+import lombok.Data;
 import my.sns.enums.UserRole;
+import my.sns.model.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,8 +12,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class UserForm implements UserDetails {
 

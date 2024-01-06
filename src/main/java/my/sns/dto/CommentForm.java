@@ -1,12 +1,12 @@
 package my.sns.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import my.sns.model.entity.CommentEntity;
 
 import java.sql.Timestamp;
 
-@Getter
+@Data
 @AllArgsConstructor
 public class CommentForm {
 

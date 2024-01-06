@@ -2,29 +2,30 @@ package my.sns.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import my.sns.model.entity.PostEntity;
+import my.sns.enums.AlarmType;
+import my.sns.model.entity.AlarmEntity;
 
 import java.sql.Timestamp;
 
-@Data
 @AllArgsConstructor
-public class PostForm {
+@Data
+public class AlarmForm {
 
     private Integer id;
-    private String title;
-    private String body;
     private UserForm user;
+    private AlarmType alarmType;
+    private AlarmArguments args;
     private Timestamp registeredAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
 
 
-    public static PostForm fromEntity(PostEntity entity) {
-        return new PostForm(
+    public static AlarmForm fromEntity(AlarmEntity entity) {
+        return new AlarmForm(
                 entity.getId(),
-                entity.getTitle(),
-                entity.getBody(),
                 UserForm.fromEntity(entity.getUser()),
+                entity.getAlarmType(),
+                entity.getArgs(),
                 entity.getRegisteredAt(),
                 entity.getUpdatedAt(),
                 entity.getDeletedAt()

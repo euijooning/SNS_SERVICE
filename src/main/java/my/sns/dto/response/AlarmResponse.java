@@ -1,6 +1,7 @@
 package my.sns.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import my.sns.dto.AlarmArguments;
 import my.sns.dto.AlarmForm;
 import my.sns.enums.AlarmType;
@@ -8,6 +9,7 @@ import my.sns.enums.AlarmType;
 import java.sql.Timestamp;
 
 @AllArgsConstructor
+@Getter
 public class AlarmResponse {
 
     private Integer id;

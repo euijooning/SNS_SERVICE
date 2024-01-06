@@ -1,8 +1,10 @@
 package my.sns.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class AlarmArguments {
 
     // 알람 발생 원인 제공자

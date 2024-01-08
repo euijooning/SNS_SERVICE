@@ -5,8 +5,7 @@ import my.sns.exception.SnsApplicationException;
 import my.sns.fixture.PostEntityFixture;
 import my.sns.model.entity.PostEntity;
 import my.sns.model.entity.UserEntity;
-import my.sns.repository.PostEntityRepository;
-import my.sns.repository.UserEntityRepository;
+import my.sns.repository.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +32,15 @@ class PostServiceTest {
 
     @Mock
     private UserEntityRepository userEntityRepository;
+
+    @Mock
+    private AlarmEntityRepository alarmEntityRepository;
+
+    @Mock
+    private CommentEntityRepository commentEntityRepository;
+
+    @Mock
+    private LikeEntityRepository likeEntityRepository;
 
 
     @InjectMocks
@@ -194,6 +202,26 @@ class PostServiceTest {
         SnsApplicationException e
                 = assertThrows(SnsApplicationException.class, () -> postService.modifyPost(title, body, userName, postId));
         assertEquals(CustomErrorCode.POST_NOT_FOUND, e.getErrorCode());
+    }
+
+
+    @DisplayName("댓글 생성 성공")
+    @Test
+    public void t9() {
+        // given
+        Integer postId = 1;
+        String userName = "testUser";
+        String comment = "Test comment";
+
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(new PostEntity()));
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(new UserEntity()));
+
+        // when
+        postService.comment(postId, userName, comment);
+
+        // then
+        verify(commentEntityRepository, times(1)).save(any());
+        verify(alarmEntityRepository, times(1)).save(any());
     }
 
 }

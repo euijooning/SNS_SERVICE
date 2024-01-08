@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -210,7 +211,7 @@ class PostServiceTest {
     public void t9() {
         // given
         Integer postId = 1;
-        String userName = "testUser";
+        String userName = "userName";
         String comment = "Test comment";
 
         when(postEntityRepository.findById(postId)).thenReturn(Optional.of(new PostEntity()));
@@ -222,6 +223,47 @@ class PostServiceTest {
         // then
         verify(commentEntityRepository, times(1)).save(any());
         verify(alarmEntityRepository, times(1)).save(any());
+    }
+
+
+    @DisplayName("좋아요 누르기 성공")
+    @Test
+    public void t10() {
+        // given
+        Integer postId = 1;
+        String userName = "userName";
+
+        // 게시글과 user mocking
+        PostEntity postEntity = Mockito.mock(PostEntity.class);
+        UserEntity userEntity = Mockito.mock(UserEntity.class);
+
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(likeEntityRepository.findByUserAndPost(userEntity, postEntity)).thenReturn(Optional.empty());
+
+        // when
+        assertDoesNotThrow(() -> postService.like(postId, userName));
+
+        // then
+        verify(likeEntityRepository, times(1)).save(any());
+        verify(alarmEntityRepository, times(1)).save(any());
+    }
+
+
+    @DisplayName("좋아요 결과 조회 성공")
+    @Test
+    public void t11() {
+        // given
+        Integer postId = 1;
+
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(new PostEntity()));
+        when(likeEntityRepository.findAllByPost(Mockito.any())).thenReturn(emptyList());
+
+        // when
+        Integer likeCount = postService.getLikeCount(postId);
+
+        // then
+        assertEquals(0, likeCount);
     }
 
 }

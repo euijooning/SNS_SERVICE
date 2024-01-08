@@ -226,9 +226,28 @@ class PostServiceTest {
     }
 
 
-    @DisplayName("좋아요 누르기 성공")
+    @DisplayName("댓글 생성 실패 - 댓글을 달려고 하는 대상 글이 존재하지 않음")
     @Test
     public void t10() {
+        // given
+        Integer postId = 1;
+        String userName = "userName";
+        String comment = "Test comment";
+
+        // post가 없음
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.empty());
+
+        // when, then
+        assertThrows(SnsApplicationException.class, () -> postService.comment(postId, userName, comment));
+
+        verify(commentEntityRepository, never()).save(any());
+        verify(alarmEntityRepository, never()).save(any());
+    }
+
+
+    @DisplayName("좋아요 누르기 성공")
+    @Test
+    public void t11() {
         // given
         Integer postId = 1;
         String userName = "userName";
@@ -252,7 +271,7 @@ class PostServiceTest {
 
     @DisplayName("좋아요 결과 조회 성공")
     @Test
-    public void t11() {
+    public void t12() {
         // given
         Integer postId = 1;
 

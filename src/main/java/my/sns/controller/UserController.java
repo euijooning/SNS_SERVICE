@@ -8,7 +8,10 @@ import my.sns.dto.request.UserLoginRequest;
 import my.sns.dto.response.AlarmResponse;
 import my.sns.dto.response.UserJoinResponse;
 import my.sns.dto.response.UserLoginResponse;
+import my.sns.exception.CustomErrorCode;
+import my.sns.exception.SnsApplicationException;
 import my.sns.service.UserService;
+import my.sns.util.ClassUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -38,6 +41,8 @@ public class UserController {
 
     @GetMapping("/alarm")
     public ResultResponse<Page<AlarmResponse>> alarm(Pageable pageable, Authentication authentication) {
-      return ResultResponse.success(userService.alarmList(authentication.getName(), pageable).map(AlarmResponse::fromAlarm));
+        UserForm user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), UserForm.class)
+                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.INTERNAL_SERVER_ERROR, "Casting to User class failed"));
+        return ResultResponse.success(userService.alarmList(user.getId(), pageable).map(AlarmResponse::fromAlarm));
     }
 }

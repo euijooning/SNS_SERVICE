@@ -17,7 +17,7 @@ import java.util.List;
 public class UserForm implements UserDetails {
 
     private Integer id;
-    private String userName;
+    private String username;
     private String password;
     private UserRole role;
     private Timestamp registeredAt;
@@ -43,10 +43,6 @@ public class UserForm implements UserDetails {
         return List.of(new SimpleGrantedAuthority(this.getRole().toString()));
     }
 
-    @Override
-    public String getUsername() {
-        return this.userName;
-    }
 
     @Override
     public boolean isAccountNonExpired() {

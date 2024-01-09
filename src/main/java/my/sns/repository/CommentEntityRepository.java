@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CommentEntityRepository extends JpaRepository<CommentEntity, Integer> {
 
     Page<CommentEntity> findAllByPost(PostEntity post, Pageable pageable);
+
+    void deleteAllByPost(PostEntity postEntity);
 }

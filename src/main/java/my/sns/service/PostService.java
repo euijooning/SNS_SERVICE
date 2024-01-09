@@ -54,7 +54,11 @@ public class PostService {
             throw new SnsApplicationException(CustomErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", userName, postId));
         }
 
-        // post 삭제
+        // post에 달린 like, comment도 함께 삭제하기
+        likeEntityRepository.deleteAllByPost(postEntity);
+        commentEntityRepository.deleteAllByPost(postEntity);
+
+        // 궁극적으로 post 삭제
         postEntityRepository.delete(postEntity);
     }
 

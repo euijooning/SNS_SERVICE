@@ -4,7 +4,6 @@ import my.sns.model.entity.LikeEntity;
 import my.sns.model.entity.PostEntity;
 import my.sns.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -20,4 +19,5 @@ public interface LikeEntityRepository extends JpaRepository<LikeEntity, Integer>
 
     List<LikeEntity> findAllByPost(@Param("post") PostEntity post);
 
+    void deleteAllByPost(PostEntity postEntity);
 }

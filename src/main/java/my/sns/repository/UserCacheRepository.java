@@ -1,6 +1,7 @@
 package my.sns.repository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import my.sns.dto.UserForm;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 // 유저 캐싱하는 작업하는 클래스. 클래스이기 때문에 @Repository 어노테이션 붙임.
 @RequiredArgsConstructor
 @Repository
+@Slf4j
 public class UserCacheRepository {
 
     private final RedisTemplate<String, UserForm> userRedisTemplate;
@@ -15,15 +17,19 @@ public class UserCacheRepository {
 
     // 유저 세팅하는 메서드
     public void setUser(UserForm user) {
-        userRedisTemplate.opsForValue().set(getKey(user.getUsername()), user);
+        String key = getKey(user.getUsername());
+        log.info("Set User to Redis {}:{}", key, user);
+        userRedisTemplate.opsForValue().set(key, user);
     }
 
     // 유저 가져오는 메서드
     public UserForm getUser(String userName) {
-        userRedisTemplate.opsForValue().get(userName);
+        String key = getKey(userName);
+        UserForm user = userRedisTemplate.opsForValue().get(key);
+        log.info("Set User to Redis {}:{}", key, user);
+
+        return user;
     }
-
-
 
 
     /**

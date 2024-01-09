@@ -54,7 +54,11 @@ public class PostService {
             throw new SnsApplicationException(CustomErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", userName, postId));
         }
 
-        // post 삭제
+        // post에 달린 like, comment도 함께 삭제하기
+        likeEntityRepository.deleteAllByPost(postEntity);
+        commentEntityRepository.deleteAllByPost(postEntity);
+
+        // 궁극적으로 post 삭제
         postEntityRepository.delete(postEntity);
     }
 
@@ -112,10 +116,10 @@ public class PostService {
         alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_LIKE_ON_POST, new AlarmArguments(userEntity.getId(), postEntity.getId())));
     }
 
-    public Integer getLikeCount(Integer postId) {
+    public Long getLikeCount(Integer postId) {
         PostEntity postEntity = getPostEntityOrException(postId);
-        List<LikeEntity> likes = likeEntityRepository.findAllByPost(postEntity);
-        return likes.size();
+        // count like
+        return likeEntityRepository.countByPost(postEntity);
     }
 
 

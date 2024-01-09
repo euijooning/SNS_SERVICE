@@ -285,7 +285,7 @@ class PostServiceTest {
         when(likeEntityRepository.findAllByPost(Mockito.any())).thenReturn(emptyList());
 
         // when
-        Integer likeCount = postService.getLikeCount(postId);
+        Long likeCount = postService.getLikeCount(postId);
 
         // then
         assertEquals(0, likeCount);

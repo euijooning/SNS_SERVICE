@@ -70,12 +70,8 @@ public class UserService {
 
 
     // 알람 기능
-    public Page<AlarmForm> alarmList(String userName, Pageable pageable) {
-        // 유저 찾아오기
-        UserEntity userEntity = userEntityRepository.findByUserName(userName)
-                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
-
-        return alarmEntityRepository.findAllByUser(userEntity, pageable).map(AlarmForm::fromEntity);
+    public Page<AlarmForm> alarmList(Integer userId, Pageable pageable) {
+        return alarmEntityRepository.findAllByUserId(userId, pageable).map(AlarmForm::fromEntity);
 
     }
 }

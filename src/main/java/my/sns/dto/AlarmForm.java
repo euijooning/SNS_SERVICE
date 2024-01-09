@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 public class AlarmForm {
 
     private Integer id;
-    private UserForm user;
     private AlarmType alarmType;
     private AlarmArguments args;
     private Timestamp registeredAt;
@@ -23,9 +22,9 @@ public class AlarmForm {
 
 
     public static AlarmForm fromEntity(AlarmEntity entity) {
+        log.info("==== call fromEntity ====");
         return new AlarmForm(
                 entity.getId(),
-                UserForm.fromEntity(entity.getUser()),
                 entity.getAlarmType(),
                 entity.getArgs(),
                 entity.getRegisteredAt(),

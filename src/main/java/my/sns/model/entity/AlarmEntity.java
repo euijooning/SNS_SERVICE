@@ -29,7 +29,7 @@ public class AlarmEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne // 이건 알람 수신자 유저!
+    @ManyToOne(fetch = FetchType.LAZY) // n+1문제 해결 / 이건 알람 수신자 유저!
     @JoinColumn(name = "user_id")
     private UserEntity user;
 

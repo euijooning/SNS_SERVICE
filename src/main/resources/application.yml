@@ -8,6 +8,9 @@ spring:
     platform: postgres
     driver-class-name: org.postgresql.Driver
 
+  redis:
+    url: redis://:p1f2bc45af9a651be1e8c98bb3ae3461ee0b5b435cfd2717a5a8e11ef7e77c62f@ec2-174-129-182-178.compute-1.amazonaws.com:15989
+
   jpa:
     database: postgresql
     show-sql: true

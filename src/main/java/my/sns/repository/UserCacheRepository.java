@@ -6,6 +6,8 @@ import my.sns.dto.UserForm;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.Duration;
+
 // 유저 캐싱하는 작업하는 클래스. 클래스이기 때문에 @Repository 어노테이션 붙임.
 @RequiredArgsConstructor
 @Repository
@@ -13,13 +15,14 @@ import org.springframework.stereotype.Repository;
 public class UserCacheRepository {
 
     private final RedisTemplate<String, UserForm> userRedisTemplate;
+    private final static Duration USER_CACHE_TTL = Duration.ofDays(3); // 3일로 유효기간 설정
 
 
     // 유저 세팅하는 메서드
     public void setUser(UserForm user) {
         String key = getKey(user.getUsername());
         log.info("Set User to Redis {}:{}", key, user);
-        userRedisTemplate.opsForValue().set(key, user);
+        userRedisTemplate.opsForValue().set(key, user, USER_CACHE_TTL);
     }
 
     // 유저 가져오는 메서드

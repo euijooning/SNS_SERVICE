@@ -25,6 +25,7 @@ public class PostService {
     private final LikeEntityRepository likeEntityRepository;
     private final CommentEntityRepository commentEntityRepository;
     private final AlarmEntityRepository alarmEntityRepository;
+    private final AlarmService alarmService;
 
 
     @Transactional
@@ -113,7 +114,9 @@ public class PostService {
         likeEntityRepository.save(LikeEntity.of(userEntity, postEntity));
 
         // 알람 발생
-        alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_LIKE_ON_POST, new AlarmArguments(userEntity.getId(), postEntity.getId())));
+        AlarmEntity alarmEntity = alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_LIKE_ON_POST, new AlarmArguments(userEntity.getId(), postEntity.getId())));
+        // 알람 발생을 알려주기
+        alarmService.send(alarmEntity.getId(), postEntity.getUser().getId()); // 두번째는 포스트 작성한 사람의 id이니까.
     }
 
     public Long getLikeCount(Integer postId) {
@@ -134,7 +137,9 @@ public class PostService {
         // 댓글 save
         commentEntityRepository.save(CommentEntity.of(userEntity, postEntity, comment));
         // 알람이 발생
-        alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_COMMENT_ON_POST, new AlarmArguments(userEntity.getId(), postEntity.getId())));
+        AlarmEntity alarmEntity = alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_COMMENT_ON_POST, new AlarmArguments(userEntity.getId(), postEntity.getId())));
+        // 알람 발생을 알려주기
+        alarmService.send(alarmEntity.getId(), postEntity.getUser().getId()); // 두번째는 포스트 작성한 사람의 id이니까.
     }
 
     public Page<CommentForm> getComments(Integer postId, Pageable pageable) {

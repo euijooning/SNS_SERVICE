@@ -10,12 +10,14 @@ import my.sns.dto.response.UserJoinResponse;
 import my.sns.dto.response.UserLoginResponse;
 import my.sns.exception.CustomErrorCode;
 import my.sns.exception.SnsApplicationException;
+import my.sns.service.AlarmService;
 import my.sns.service.UserService;
 import my.sns.util.ClassUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final AlarmService alarmService;
 
     @PostMapping("/join")
     public ResultResponse<UserJoinResponse> join(@RequestBody UserJoinRequest request) {
@@ -45,4 +48,15 @@ public class UserController {
                 .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.INTERNAL_SERVER_ERROR, "Casting to User class failed"));
         return ResultResponse.success(userService.alarmList(user.getId(), pageable).map(AlarmResponse::fromAlarm));
     }
+
+
+    @GetMapping("/alarm/subscribe")
+    public SseEmitter subscribe(Authentication authentication) {
+        // 유저 찾아오기
+        UserForm user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), UserForm.class)
+                .orElseThrow(() -> new SnsApplicationException(CustomErrorCode.INTERNAL_SERVER_ERROR, "Casting to User class failed"));
+        return alarmService.connectAlarm(user.getId());
+
+    }
+
 }

@@ -4,7 +4,7 @@ spring:
       maximum-pool-size: 4
     url: jdbc:postgresql://ec2-107-22-101-0.compute-1.amazonaws.com/doapn3p18mebj
     username: izbpoaamrhbkab
-    password:
+    password: 3636d0e7bdda28a3b566cbe6fd4081d02410bbafd1c073114f498fffabfc48e7
     platform: postgres
     driver-class-name: org.postgresql.Driver
 
